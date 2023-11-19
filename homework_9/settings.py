@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "carshop.apps.CarshopConfig",
+    "django_bootstrap5",
 ]
 
 MIDDLEWARE = [
