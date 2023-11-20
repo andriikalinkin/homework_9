@@ -11,7 +11,7 @@ class Client(models.Model):
 
 
 class CarType(models.Model):
-    name = models.CharField(max_length=50)
+    model = models.CharField(max_length=50)
     brand = models.CharField(max_length=50)
     price = models.PositiveIntegerField()
 
