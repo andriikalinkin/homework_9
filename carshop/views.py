@@ -69,7 +69,7 @@ def select_dealership(request):
         if form.is_valid():
             dealership_id = form.cleaned_data["dealership"].id
 
-            return redirect("select_car_type.html", dealership_id=dealership_id)
+            return redirect("select_car_type", dealership_id=dealership_id)
 
     form = forms.SelectDealershipForm()
 
@@ -77,7 +77,16 @@ def select_dealership(request):
 
 
 def select_car_type(request, dealership_id: int):
-    pass
+    if request.method == "POST":
+        form = forms.SelectCarTypeForm(request.POST, dealership_id=dealership_id)
+        if form.is_valid():
+            car_type_id = form.cleaned_data["car_type"].id
+
+            return redirect("select_car_and_license", car_type_id=car_type_id)
+
+    form = forms.SelectCarTypeForm(dealership_id=dealership_id)
+
+    return render(request, "select_car_type.html", {"form": form, "dealership_id": dealership_id})
 
 
 def select_car_and_license(request, car_type_id: int):
