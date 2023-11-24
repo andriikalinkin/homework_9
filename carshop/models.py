@@ -7,16 +7,13 @@ class Client(models.Model):
     phone = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.name
+        return f"ID {self.id} - {self.name}"
 
 
 class CarType(models.Model):
     model = models.CharField(max_length=50)
     brand = models.CharField(max_length=50)
     price = models.PositiveIntegerField()
-
-    def __str__(self):
-        return self.name
 
 
 class Car(models.Model):
@@ -26,30 +23,10 @@ class Car(models.Model):
     blocked_by_order = models.ForeignKey("Order", on_delete=models.SET_NULL, null=True, related_name="reserved_cars")
     owner = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, related_name="cars")
 
-    def block(self, order):
-        self.blocked_by_order = order
-        self.save()
 
-    def unblock(self):
-        self.blocked_by_order = None
-        self.save()
-
-    def sell(self):
-        if not self.blocked_by_order:
-            raise Exception("Car is not reserved")
-        self.owner = self.blocked_by_order.client
-        self.save()
-
-    def __str__(self):
-        return self.color
-
-
-class Licence(models.Model):
-    car = models.OneToOneField(Car, on_delete=models.SET_NULL, null=True, related_name="licence")
+class License(models.Model):
+    car = models.OneToOneField(Car, on_delete=models.SET_NULL, null=True, related_name="license")
     number = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.number
 
 
 class Dealership(models.Model):
