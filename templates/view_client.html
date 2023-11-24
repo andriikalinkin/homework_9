@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}View client{% endblock %}</title>
+</head>
+<body>
+
+    {% block content %}
+
+        <div class="mb-4"></div>
+
+        <div class="mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h3>ID{{ context.client.id }}, {{ context.client.name }}, {{ context.client.email }}, {{ context.client.phone }}</h3><br>
+
+                        <div class="mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4>Created orders</h4>
+                                    <table class="table">
+                                        <thead>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Order ID</th>
+                                            <th scope="col">Brand</th>
+                                            <th scope="col">Model</th>
+                                            <th scope="col">Quantity</th>
+                                            <th scope="col">Dealership</th>
+                                            <th scope="col">Is paid</th>
+                                        </thead>
+                                        <tbody>
+                                            {% for order in context.orders %}
+                                                <tr>
+                                                    <td>{{ forloop.counter }}</td>
+                                                    <td>{{ order.id }}</td>
+                                                    <td>{{ order.brand }}</td>
+                                                    <td>{{ order.model }}</td>
+                                                    <td>{{ order.quantity }}</td>
+                                                    <td>{{ order.dealership }}</td>
+                                                    <td>{{ order.is_paid }}</td>
+                                                    <td>
+                                                        <a href="{% url 'view_order' order.id %}" class="btn btn-primary">View</a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4>Purchased cars</h4>
+                                    <table class="table">
+                                        <thead>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Brand</th>
+                                            <th scope="col">Model</th>
+                                            <th scope="col">Color</th>
+                                            <th scope="col">Year</th>
+                                            <th scope="col">Price</th>
+                                            <th scope="col">Licence</th>
+                                        </thead>
+                                        <tbody>
+                                            {% for car in context.purchased_cars %}
+                                                <tr>
+                                                    <td>{{ forloop.counter }}</td>
+                                                    <td>{{ car.brand }}</td>
+                                                    <td>{{ car.model }}</td>
+                                                    <td>{{ car.color }}</td>
+                                                    <td>{{ car.year }}</td>
+                                                    <td>{{ car.price }}</td>
+                                                    <td>{{ car.number }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                </div>
+            </div>
+        </div>
+
+    {% endblock %}
+
+</body>
+</html>
