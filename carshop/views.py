@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from . import models
 from . import forms
 
@@ -69,7 +69,7 @@ def select_dealership(request):
         if form.is_valid():
             dealership_id = form.cleaned_data["dealership"].id
 
-            return redirect("select_car_type", dealership_id=dealership_id)
+            return redirect("select_car_type")
 
     form = forms.SelectDealershipForm()
 
@@ -82,7 +82,10 @@ def select_car_type(request, dealership_id: int):
         if form.is_valid():
             car_type_id = form.cleaned_data["car_type"].id
 
-            return redirect("select_car_and_license", car_type_id=car_type_id)
+            return redirect(
+                "select_car_and_license",
+                car_type_id=car_type_id,
+            )
 
     form = forms.SelectCarTypeForm(dealership_id=dealership_id)
 
@@ -90,7 +93,20 @@ def select_car_type(request, dealership_id: int):
 
 
 def select_car_and_license(request, car_type_id: int):
-    pass
+    if request.method == "POST":
+        form = forms.SelectCarAndLicenseForm(request.POST)
+        if form.is_valid():
+            order = models.Order.objects.create(client=0, dealership=0, is_paid=False)
+
+            return redirect("select_order", order_id=order.id)
+
+    form = forms.SelectCarAndLicenseForm(car_type_id=car_type_id)
+
+    return render(
+        request,
+        "select_car_and_license.html",
+        {"form": form, "car_type_id": car_type_id},
+    )
 
 
 def select_order(request):
