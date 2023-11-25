@@ -15,6 +15,9 @@ class CarType(models.Model):
     brand = models.CharField(max_length=50)
     price = models.PositiveIntegerField()
 
+    def __str__(self):
+        return f"{self.brand} - {self.model}"
+
 
 class Car(models.Model):
     car_type = models.ForeignKey(CarType, on_delete=models.CASCADE)
@@ -23,10 +26,16 @@ class Car(models.Model):
     blocked_by_order = models.ForeignKey("Order", on_delete=models.SET_NULL, null=True, related_name="reserved_cars")
     owner = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, related_name="cars")
 
+    def __str__(self):
+        return f"{self.car_type.brand} - {self.car_type.model} - {self.year} - {self.color}"
+
 
 class License(models.Model):
     car = models.OneToOneField(Car, on_delete=models.SET_NULL, null=True, related_name="license")
     number = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"ID {self.id} - {self.number}"
 
 
 class Dealership(models.Model):
@@ -48,4 +57,3 @@ class OrderQuantity(models.Model):
     car_type = models.ForeignKey(CarType, on_delete=models.CASCADE, related_name="order_quantities")
     quantity = models.PositiveIntegerField(default=1)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="car_types")
-    
