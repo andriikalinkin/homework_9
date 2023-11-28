@@ -35,7 +35,7 @@ class License(models.Model):
     number = models.CharField(max_length=50)
 
     def __str__(self):
-        return f"ID {self.id} - {self.number}"
+        return f"ID {self.id} - \"{self.number}\""
 
 
 class Dealership(models.Model):

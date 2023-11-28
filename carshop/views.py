@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from . import models
 from . import forms
@@ -36,6 +37,9 @@ def select_client(request):
 
 
 def view_client(request, client_id: int):
+    user_session = {"client_id": client_id}
+    request.session["user_session"] = user_session
+
     purchased_cars = models.Car.objects.filter(owner=client_id).values(
         "car_type__brand",
         "car_type__model",
@@ -64,49 +68,95 @@ def view_client(request, client_id: int):
 
 
 def select_dealership(request):
+    user_session = request.session.get("user_session", {})
+    client_id = user_session["client_id"]
+
     if request.method == "POST":
         form = forms.SelectDealershipForm(request.POST)
         if form.is_valid():
-            dealership_id = form.cleaned_data["dealership"].id
+            user_session["client_id"] = form.cleaned_data["client"].id
+            user_session["dealership_id"] = form.cleaned_data["dealership"].id
+            request.session.modified = True
 
             return redirect("select_car_type")
 
-    form = forms.SelectDealershipForm()
+    form = forms.SelectDealershipForm(client_id=client_id)
 
     return render(request, "select_dealership.html", {"form": form})
 
 
-def select_car_type(request, dealership_id: int):
+def select_car_type(request):
+    user_session = request.session.get("user_session", {})
+    dealership_id = user_session["dealership_id"]
+
     if request.method == "POST":
         form = forms.SelectCarTypeForm(request.POST, dealership_id=dealership_id)
         if form.is_valid():
-            car_type_id = form.cleaned_data["car_type"].id
+            user_session["car_type_id"] = form.cleaned_data["car_type"].id
+            request.session.modified = True
 
-            return redirect(
-                "select_car_and_license",
-                car_type_id=car_type_id,
-            )
+            return redirect("select_car_and_license")
 
     form = forms.SelectCarTypeForm(dealership_id=dealership_id)
 
-    return render(request, "select_car_type.html", {"form": form, "dealership_id": dealership_id})
+    return render(request, "select_car_type.html", {"form": form})
 
 
-def select_car_and_license(request, car_type_id: int):
+def select_car_and_license(request):
+    user_session = request.session.get("user_session", {})
+    client_id = user_session["client_id"]
+    dealership_id = user_session["dealership_id"]
+    car_type_id = user_session["car_type_id"]
+
     if request.method == "POST":
-        form = forms.SelectCarAndLicenseForm(request.POST)
+        form = forms.SelectCarAndLicenseForm(request.POST, car_type_id=car_type_id)
         if form.is_valid():
-            order = models.Order.objects.create(client=0, dealership=0, is_paid=False)
+            client = models.Client.objects.get(id=client_id)
+            dealership = models.Dealership.objects.get(id=dealership_id)
 
-            return redirect("select_order", order_id=order.id)
+            try:
+                with transaction.atomic():
+                    # Create order.
+                    order = models.Order.objects.create(client=client, dealership=dealership, is_paid=False)
+
+                    # Add car to a license.
+                    license = get_object_or_404(models.License, number=form.cleaned_data["license_number"].number)
+                    license.car = form.cleaned_data["car"]
+                    license.save()
+
+                    # Add order, client to a car.
+                    car = get_object_or_404(models.Car, id=form.cleaned_data["car"].id)
+                    car.blocked_by_order = order
+                    car.owner = client
+                    car.save()
+
+            except Exception as e:
+                # Обработка ошибок, если что-то пошло не так в транзакции.
+                print(f"Error in transaction: {e}")
+                # Можно добавить логирование или другую обработку ошибок.
+
+            else:
+                return redirect("view_order", order_id=order.id)
+
+            # Create order.
+            # order = models.Order.objects.create(client=client, dealership=dealership, is_paid=False)
+            #
+            # # Add car to a license.
+            # license = get_object_or_404(models.License, number=form.cleaned_data["license_number"].number)
+            # license.car = form.cleaned_data["car"]
+            # license.save()
+            #
+            # # Add order, client to a car.
+            # car = get_object_or_404(models.Car, id=form.cleaned_data["car"].id)
+            # car.blocked_by_order = order
+            # car.owner = client
+            # car.save()
+            #
+            # return redirect("view_order", order_id=order.id)
 
     form = forms.SelectCarAndLicenseForm(car_type_id=car_type_id)
 
-    return render(
-        request,
-        "select_car_and_license.html",
-        {"form": form, "car_type_id": car_type_id},
-    )
+    return render(request, "select_car_and_license.html", {"form": form})
 
 
 def select_order(request):
@@ -114,4 +164,28 @@ def select_order(request):
 
 
 def view_order(request, order_id: int):
-    pass
+    user_session = request.session.get("user_session", {})
+    client_id = user_session["client_id"]
+
+    order = models.Order.objects.get(id=order_id)
+
+    context = {
+        'order_id': order_id,
+        'client_name': order.client.name,
+        'dealership_name': order.dealership.name,
+        'car_brand': order.reserved_cars.first().car_type.brand,
+        'car_model': order.reserved_cars.first().car_type.model,
+        'car_year': order.reserved_cars.first().year,
+        'car_color': order.reserved_cars.first().color,
+    }
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "delete":
+            print('DELETEEE')
+        elif action == "purchase":
+            print("PURCHASEEE")
+
+        # return redirect("view_client", client_id)
+
+    return render(request, "view_order.html", {"context": context})

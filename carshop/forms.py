@@ -17,11 +17,23 @@ class SelectClientForm(forms.Form):
 
 
 class SelectDealershipForm(forms.Form):
+    client = forms.ModelChoiceField(
+        queryset=models.Client.objects.all(),
+        label="Select client",
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
+
     dealership = forms.ModelChoiceField(
         queryset=models.Dealership.objects.all(),
         label="Select dealership",
         widget=forms.Select(attrs={"class": "form-control"}),
     )
+
+    def __init__(self, *args, **kwargs):
+        client_id = kwargs.pop('client_id', None)
+        super(SelectDealershipForm, self).__init__(*args, **kwargs)
+        if client_id:
+            self.fields['client'].initial = client_id
 
 
 class SelectCarTypeForm(forms.Form):
@@ -46,7 +58,7 @@ class SelectCarAndLicenseForm(forms.Form):
     )
 
     license_number = forms.ModelChoiceField(
-        queryset=models.License.objects.filter(car=None),  # Здесь должны быть лицензии которые не связаны с машинами
+        queryset=models.License.objects.filter(car=None),
         label="Select license number",
         widget=forms.Select(attrs={"class": "form-control"}),
     )

@@ -16,8 +16,8 @@
         <div class="mb-4">
             <div class="card">
                 <div class="card-body">
-                    <h3>Step 3</h3>
-                    <form method="post" action="{% url 'select_car_and_license' client_id %}">
+                    <h3>Create order - Step 3</h3>
+                    <form method="post" action="{% url 'select_car_and_license' %}">
                         {% csrf_token %}
                         {% bootstrap_form form layout='horizontal' %}
                         <button type="submit" class="btn btn-primary">Submit</button>

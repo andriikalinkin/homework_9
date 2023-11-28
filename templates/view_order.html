@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}View order{% endblock %}</title>
+</head>
+<body>
+
+    {% block content %}
+
+        <div class="mb-4"></div>
+
+        <div class="mb-4">
+            <div class="card">
+                <div class="card-body">
+
+                    <h3>Order information</h3>
+
+                    <div class="mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <p><b>Order ID:</b> {{ context.order_id }}</p>
+                                <p><b>Client name:</b> {{ context.client_name }}</p>
+                                <p><b>Dealership name:</b> {{ context.dealership_name }}</p>
+                                <p><b>Car brand:</b> {{ context.car_brand }}</p>
+                                <p><b>Car model:</b> {{ context.car_model }}</p>
+                                <p><b>Car year:</b> {{ context.car_year }}</p>
+                                <p><b>Car color:</b> {{ context.car_color }}</p>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" name="action" value="delete" class="btn btn-danger mr-4">Delete</button>
+                        <button type="submit" name="action" value="purchase" class="btn btn-success">Purchase</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    {% endblock %}
+
+</body>
+</html>
