@@ -26,10 +26,13 @@
                                         <thead>
                                             <th scope="col">#</th>
                                             <th scope="col">Order ID</th>
+                                            <th scope="col">Dealership</th>
                                             <th scope="col">Brand</th>
                                             <th scope="col">Model</th>
-                                            <th scope="col">Quantity</th>
-                                            <th scope="col">Dealership</th>
+                                            <th scope="col">Color</th>
+                                            <th scope="col">Year</th>
+                                            <th scope="col">License</th>
+                                            <th scope="col">Price</th>
                                             <th scope="col">Is paid</th>
                                         </thead>
                                         <tbody>
@@ -37,10 +40,13 @@
                                                 <tr>
                                                     <td>{{ forloop.counter }}</td>
                                                     <td>{{ order.id }}</td>
-                                                    <td>{{ order.brand }}</td>
-                                                    <td>{{ order.model }}</td>
-                                                    <td>{{ order.quantity }}</td>
-                                                    <td>{{ order.dealership }}</td>
+                                                    <td>{{ order.dealership__name }}</td>
+                                                    <td>{{ order.reserved_cars__car_type__brand }}</td>
+                                                    <td>{{ order.reserved_cars__car_type__model }}</td>
+                                                    <td>{{ order.reserved_cars__color }}</td>
+                                                    <td>{{ order.reserved_cars__year }}</td>
+                                                    <td>{{ order.reserved_cars__license__number }}</td>
+                                                    <td>{{ order.reserved_cars__car_type__price }}</td>
                                                     <td>{{ order.is_paid }}</td>
                                                     <td>
                                                         <a href="{% url 'view_order' order.id %}" class="btn btn-primary">View</a>
@@ -64,19 +70,19 @@
                                             <th scope="col">Model</th>
                                             <th scope="col">Color</th>
                                             <th scope="col">Year</th>
-                                            <th scope="col">Price</th>
                                             <th scope="col">Licence</th>
+                                            <th scope="col">Price (USD)</th>
                                         </thead>
                                         <tbody>
                                             {% for car in context.purchased_cars %}
                                                 <tr>
                                                     <td>{{ forloop.counter }}</td>
-                                                    <td>{{ car.brand }}</td>
-                                                    <td>{{ car.model }}</td>
+                                                    <td>{{ car.car_type__brand }}</td>
+                                                    <td>{{ car.car_type__model }}</td>
                                                     <td>{{ car.color }}</td>
                                                     <td>{{ car.year }}</td>
-                                                    <td>{{ car.price }}</td>
-                                                    <td>{{ car.number }}</td>
+                                                    <td>{{ car.license__number }}</td>
+                                                    <td>{{ car.car_type__price }}</td>
                                                 </tr>
                                             {% endfor %}
                                         </tbody>
