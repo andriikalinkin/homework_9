@@ -16,7 +16,7 @@ class CarType(models.Model):
     price = models.PositiveIntegerField()
 
     def __str__(self):
-        return f"{self.brand} - {self.model}"
+        return f"{self.brand} - {self.model} - {self.price} USD"
 
 
 class Car(models.Model):
@@ -27,7 +27,7 @@ class Car(models.Model):
     owner = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, related_name="cars")
 
     def __str__(self):
-        return f"{self.car_type.brand} - {self.car_type.model} - {self.year} - {self.color}"
+        return f"{self.car_type.brand} - {self.car_type.model} - {self.car_type.price} USD - {self.year} - {self.color}"
 
 
 class License(models.Model):
@@ -35,7 +35,7 @@ class License(models.Model):
     number = models.CharField(max_length=50)
 
     def __str__(self):
-        return f"ID {self.id} - \"{self.number}\""
+        return f'ID {self.id} - "{self.number}"'
 
 
 class Dealership(models.Model):
@@ -52,8 +52,5 @@ class Order(models.Model):
     dealership = models.ForeignKey(Dealership, on_delete=models.CASCADE, related_name="orders")
     is_paid = models.BooleanField(default=False)
 
-
-class OrderQuantity(models.Model):
-    car_type = models.ForeignKey(CarType, on_delete=models.CASCADE, related_name="order_quantities")
-    quantity = models.PositiveIntegerField(default=1)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="car_types")
+    def __str__(self):
+        return f"Order ID: {self.id} - Client name: {self.client.name}"
