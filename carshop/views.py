@@ -43,12 +43,12 @@ def view_client(request, client_id: int):
     orders = models.Order.objects.filter(client=client_id, is_paid=False).values(
         "id",
         "dealership__name",
-        "reserved_cars__car_type__brand",  # Добавлено поле brand
-        "reserved_cars__car_type__model",  # Добавлено поле model
-        "reserved_cars__color",  # Добавлено поле color
-        "reserved_cars__year",  # Добавлено поле year
-        "reserved_cars__license__number",  # Добавлено поле license
-        "reserved_cars__car_type__price",  # Добавлено поле price
+        "reserved_cars__car_type__brand",
+        "reserved_cars__car_type__model",
+        "reserved_cars__color",
+        "reserved_cars__year",
+        "reserved_cars__license__number",
+        "reserved_cars__car_type__price",
         "is_paid",
     )
 
