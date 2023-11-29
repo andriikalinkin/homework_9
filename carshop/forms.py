@@ -30,10 +30,10 @@ class SelectDealershipForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        client_id = kwargs.pop('client_id', None)
+        client_id = kwargs.pop("client_id", None)
         super(SelectDealershipForm, self).__init__(*args, **kwargs)
         if client_id:
-            self.fields['client'].initial = client_id
+            self.fields["client"].initial = client_id
 
 
 class SelectCarTypeForm(forms.Form):
@@ -69,3 +69,11 @@ class SelectCarAndLicenseForm(forms.Form):
             self.fields["car"].queryset = models.Car.objects.filter(
                 car_type_id=car_type_id, blocked_by_order=None, owner=None
             )
+
+
+class SelectOrderForm(forms.Form):
+    order = forms.ModelChoiceField(
+        queryset=models.Order.objects.filter(is_paid=False),
+        label="Available orders",
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
