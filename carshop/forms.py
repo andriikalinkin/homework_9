@@ -74,6 +74,6 @@ class SelectCarAndLicenseForm(forms.Form):
 class SelectOrderForm(forms.Form):
     order = forms.ModelChoiceField(
         queryset=models.Order.objects.filter(is_paid=False),
-        label="Available orders",
+        label="Unpaid orders",
         widget=forms.Select(attrs={"class": "form-control"}),
     )
