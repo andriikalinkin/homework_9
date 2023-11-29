@@ -23,15 +23,21 @@ class Car(models.Model):
     car_type = models.ForeignKey(CarType, on_delete=models.CASCADE)
     color = models.CharField(max_length=50)
     year = models.IntegerField()
-    blocked_by_order = models.ForeignKey("Order", on_delete=models.SET_NULL, null=True, related_name="reserved_cars")
-    owner = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, related_name="cars")
+    blocked_by_order = models.ForeignKey(
+        "Order", on_delete=models.SET_NULL, null=True, related_name="reserved_cars"
+    )
+    owner = models.ForeignKey(
+        Client, on_delete=models.SET_NULL, null=True, related_name="cars"
+    )
 
     def __str__(self):
         return f"{self.car_type.brand} - {self.car_type.model} - {self.car_type.price} USD - {self.year} - {self.color}"
 
 
 class License(models.Model):
-    car = models.OneToOneField(Car, on_delete=models.SET_NULL, null=True, related_name="license")
+    car = models.OneToOneField(
+        Car, on_delete=models.SET_NULL, null=True, related_name="license"
+    )
     number = models.CharField(max_length=50)
 
     def __str__(self):
@@ -49,7 +55,9 @@ class Dealership(models.Model):
 
 class Order(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="orders")
-    dealership = models.ForeignKey(Dealership, on_delete=models.CASCADE, related_name="orders")
+    dealership = models.ForeignKey(
+        Dealership, on_delete=models.CASCADE, related_name="orders"
+    )
     is_paid = models.BooleanField(default=False)
 
     def __str__(self):
