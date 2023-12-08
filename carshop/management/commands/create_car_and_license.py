@@ -37,11 +37,11 @@ class Command(BaseCommand):
                 for _ in range(CarType.objects.count()):
                     for _ in range(quantity):
                         # Генерация уникального номера лицензии
-                        unique_license_number = fake.unique.bothify("?? #### ??")
+                        unique_license_number = fake.unique.bothify("?? #### ??").upper()
 
                         # Проверка на уникальность
                         while unique_license_number in existing_license_numbers:
-                            unique_license_number = fake.unique.bothify("?? #### ??")
+                            unique_license_number = fake.unique.bothify("?? #### ??").upper()
 
                         License.objects.create(
                             number=unique_license_number
