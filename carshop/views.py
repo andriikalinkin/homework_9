@@ -71,8 +71,11 @@ def view_client(request, client_id: int):
 
 
 def select_dealership(request):
-    user_session = request.session.get("user_session", {})
-    client_id = user_session["client_id"]
+    try:
+        user_session = request.session.get("user_session", {})
+        client_id = user_session["client_id"]
+    except KeyError:
+        client_id = None
 
     if request.method == "POST":
         form = forms.SelectDealershipForm(request.POST)
