@@ -44,7 +44,6 @@ class Command(BaseCommand):
                             unique_license_number = fake.unique.bothify("?? #### ??")
 
                         License.objects.create(
-                            car_type=car_type,
                             number=unique_license_number
                         )
 
