@@ -34,26 +34,14 @@ class Command(BaseCommand):
 
                 existing_license_numbers = [i.number for i in License.objects.all()]
 
-                for car_type in all_car_types:
+                for _ in range(CarType.objects.count()):
                     for _ in range(quantity):
-                        string_format = "?? #### ??"
-                        letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                        digits = "0123456789"
-
                         # Генерация уникального номера лицензии
-                        unique_license_number = fake.unique.pystr_format(
-                            string_format=string_format,
-                            letters=letters,
-                            numbers=digits
-                        )
+                        unique_license_number = fake.unique.bothify("?? #### ??")
 
                         # Проверка на уникальность
                         while unique_license_number in existing_license_numbers:
-                            unique_license_number = fake.unique.pystr_format(
-                                string_format=string_format,
-                                letters=letters,
-                                numbers=digits
-                            )
+                            unique_license_number = fake.unique.bothify("?? #### ??")
 
                         License.objects.create(
                             car_type=car_type,
