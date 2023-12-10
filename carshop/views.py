@@ -37,8 +37,10 @@ def select_client(request):
 
 
 def view_client(request, client_id: int):
-    user_session = {"client_id": client_id}
-    request.session["user_session"] = user_session
+    # user_session = {"client_id": client_id}
+    # request.session["user_session"] = user_session
+    request.session["client_id"] = client_id
+    request.session.modified = True
 
     orders = models.Order.objects.filter(client=client_id, is_paid=False).values(
         "id",
@@ -71,14 +73,17 @@ def view_client(request, client_id: int):
 
 
 def select_dealership(request):
-    user_session = request.session.get("user_session", {})
-    client_id = user_session["client_id"]
+    # user_session = request.session.get("user_session", {})
+    # client_id = user_session["client_id"]
+    client_id = request.session.get("client_id", None)
 
     if request.method == "POST":
         form = forms.SelectDealershipForm(request.POST)
         if form.is_valid():
-            user_session["client_id"] = form.cleaned_data["client"].id
-            user_session["dealership_id"] = form.cleaned_data["dealership"].id
+            # user_session["client_id"] = form.cleaned_data["client"].id
+            # user_session["dealership_id"] = form.cleaned_data["dealership"].id
+            request.session["client_id"] = form.cleaned_data["client"].id
+            request.session["dealership_id"] = form.cleaned_data["dealership"].id
             request.session.modified = True
 
             return redirect("select_car_type")
@@ -89,13 +94,15 @@ def select_dealership(request):
 
 
 def select_car_type(request):
-    user_session = request.session.get("user_session", {})
-    dealership_id = user_session["dealership_id"]
+    # user_session = request.session.get("user_session", {})
+    # dealership_id = user_session["dealership_id"]
+    dealership_id = request.session.get("dealership_id", None)
 
     if request.method == "POST":
         form = forms.SelectCarTypeForm(request.POST, dealership_id=dealership_id)
         if form.is_valid():
-            user_session["car_type_id"] = form.cleaned_data["car_type"].id
+            # user_session["car_type_id"] = form.cleaned_data["car_type"].id
+            request.session["car_type_id"] = form.cleaned_data["car_type"].id
             request.session.modified = True
 
             return redirect("select_car_and_license")
@@ -106,10 +113,13 @@ def select_car_type(request):
 
 
 def select_car_and_license(request):
-    user_session = request.session.get("user_session", {})
-    client_id = user_session["client_id"]
-    dealership_id = user_session["dealership_id"]
-    car_type_id = user_session["car_type_id"]
+    # user_session = request.session.get("user_session", {})
+    # client_id = user_session["client_id"]
+    # dealership_id = user_session["dealership_id"]
+    # car_type_id = user_session["car_type_id"]
+    client_id = request.session.get("client_id", None)
+    dealership_id = request.session.get("dealership_id", None)
+    car_type_id = request.session.get("car_type_id", None)
 
     if request.method == "POST":
         form = forms.SelectCarAndLicenseForm(request.POST, car_type_id=car_type_id)
@@ -161,8 +171,9 @@ def select_order(request):
 
 
 def view_order(request, order_id: int):
-    user_session = request.session.get("user_session", {})
-    client_id = user_session["client_id"]
+    # user_session = request.session.get("user_session", {})
+    # client_id = user_session["client_id"]
+    client_id = request.session.get("client_id", None)
 
     order = models.Order.objects.get(id=order_id)
 
