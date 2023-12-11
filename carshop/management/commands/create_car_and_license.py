@@ -26,11 +26,7 @@ class Command(BaseCommand):
 
                 for car_type in all_car_types:
                     for _ in range(quantity):
-                        Car.objects.create(
-                            car_type=car_type,
-                            color=color,
-                            year=year
-                        )
+                        Car.objects.create(car_type=car_type, color=color, year=year)
 
                 existing_license_numbers = [i.number for i in License.objects.all()]
 
@@ -43,9 +39,7 @@ class Command(BaseCommand):
                         while unique_license_number in existing_license_numbers:
                             unique_license_number = fake.unique.bothify("?? #### ??").upper()
 
-                        License.objects.create(
-                            number=unique_license_number
-                        )
+                        License.objects.create(number=unique_license_number)
 
                         existing_license_numbers.append(unique_license_number)
 

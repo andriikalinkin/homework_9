@@ -198,4 +198,4 @@ WHITENOISE_KEEP_ONLY_HASHED_FILES = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"

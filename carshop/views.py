@@ -130,9 +130,7 @@ def select_car_and_license(request):
             try:
                 with transaction.atomic():
                     # Create order.
-                    order = models.Order.objects.create(
-                        client=client, dealership=dealership, is_paid=False
-                    )
+                    order = models.Order.objects.create(client=client, dealership=dealership, is_paid=False)
 
                     # Add car to a license.
                     license = get_object_or_404(
